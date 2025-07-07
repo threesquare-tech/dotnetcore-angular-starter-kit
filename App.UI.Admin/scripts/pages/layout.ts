@@ -12,7 +12,7 @@ import { ViewChild, TemplateRef, ViewContainerRef, AfterViewInit, Directive } fr
 <ng-template #content>
 <nav class="navbar navbar-expand-sm bg-primary fixed-top">
   <div class="container-fluid">
-    <button class="btn btn-link text-white me-2" (click)="drawer.toggle()" style="font-size: 1.5rem;">
+    <button class="btn btn-link text-white me-2" (click)="toggleSidebar()" style="font-size: 1.5rem;">
       <i class="bi bi-list"></i>
     </button>
     <a class="navbar-brand d-flex align-items-center" href="javascript:">
@@ -24,44 +24,97 @@ import { ViewChild, TemplateRef, ViewContainerRef, AfterViewInit, Directive } fr
     </a>
   </div>
 </nav>
-<mat-sidenav-container class="layout">
-  <mat-sidenav #drawer class="sidenav" mode="side" opened>
-    <mat-nav-list>
-      <a mat-list-item routerLink="/dashboard" class="my-1"><mat-icon>dashboard</mat-icon> Dashboard</a>
-      <mat-expansion-panel hideToggle class="my-1">
-        <mat-expansion-panel-header>
-          <mat-panel-title><mat-icon>storefront</mat-icon> Order </mat-panel-title>
-        </mat-expansion-panel-header>
-        <a mat-list-item routerLink="/orders" class="my-1"><mat-icon>shopping_bag</mat-icon> Orders</a>
-        <a mat-list-item routerLink="/customers" class="my-1"><mat-icon>emoji_people</mat-icon> Customers</a>
-      </mat-expansion-panel>
-      <mat-expansion-panel hideToggle class="my-1">
-        <mat-expansion-panel-header>
-          <mat-panel-title><mat-icon>lunch_dining</mat-icon> Menu </mat-panel-title>
-        </mat-expansion-panel-header>
-        <a mat-list-item routerLink="/menu-items">Menu Items</a>
-        <a mat-list-item routerLink="/menu-categories">Categories</a>
-        <a mat-list-item routerLink="/variations">Variations</a>
-      </mat-expansion-panel>
-      <mat-expansion-panel hideToggle class="my-1">
-        <mat-expansion-panel-header>
-         <mat-panel-title> <mat-icon>settings</mat-icon> Settings</mat-panel-title>   
-        </mat-expansion-panel-header>
-         <a mat-list-item routerLink="/branches">Branches</a>
-         <a mat-list-item routerLink="site-settings">Site Settings</a>
-         <a mat-list-item routerLink="user-list">User</a>
-        </mat-expansion-panel>
-    </mat-nav-list>
-  </mat-sidenav>
-  <mat-sidenav-content class="main-content">
-    <router-outlet></router-outlet>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+
+<div class="container-fluid">
+  <div class="row">
+    <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse" [class.show]="sidebarOpen">
+      <div class="position-sticky pt-3">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link active" routerLink="/dashboard" routerLinkActive="active">
+              <i class="bi bi-speedometer2 me-2"></i>
+              Dashboard
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#orderCollapse" role="button" aria-expanded="false" aria-controls="orderCollapse">
+              <i class="bi bi-shop me-2"></i>
+              Order
+              <i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <div class="collapse" id="orderCollapse">
+              <ul class="nav flex-column ms-3">
+                <li class="nav-item">
+                  <a class="nav-link" routerLink="/orders">
+                    <i class="bi bi-bag me-2"></i>Orders
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" routerLink="/customers">
+                    <i class="bi bi-people me-2"></i>Customers
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#menuCollapse" role="button" aria-expanded="false" aria-controls="menuCollapse">
+              <i class="bi bi-cup-hot me-2"></i>
+              Menu
+              <i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <div class="collapse" id="menuCollapse">
+              <ul class="nav flex-column ms-3">
+                <li class="nav-item">
+                  <a class="nav-link" routerLink="/menu-items">Menu Items</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" routerLink="/menu-categories">Categories</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" routerLink="/variations">Variations</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#settingsCollapse" role="button" aria-expanded="false" aria-controls="settingsCollapse">
+              <i class="bi bi-gear me-2"></i>
+              Settings
+              <i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <div class="collapse" id="settingsCollapse">
+              <ul class="nav flex-column ms-3">
+                <li class="nav-item">
+                  <a class="nav-link" routerLink="/branches">Branches</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" routerLink="/site-settings">Site Settings</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" routerLink="/user-list">User</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
 </ng-template>
   `
 })
 export class MainLayout implements AfterViewInit {
   @ViewChild('content', { read: TemplateRef }) contentTemplate!: TemplateRef<any>;
+  sidebarOpen = true;
   
   constructor(
     protected viewContainerRef: ViewContainerRef,
@@ -70,5 +123,9 @@ export class MainLayout implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.viewContainerRef.createEmbeddedView(this.contentTemplate);
+  }
+
+  toggleSidebar(): void {
+    this.sidebarOpen = !this.sidebarOpen;
   }
 } 
